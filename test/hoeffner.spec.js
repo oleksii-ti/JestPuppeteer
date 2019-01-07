@@ -1,0 +1,88 @@
+const ArticlePage = require('../pages/ArticlePage');
+const CartPage = require('../pages/CartPage');
+const AddressPage = require('../pages/AddressPage');
+const PaymentMethodPage = require('../pages/PaymentMethodPage');
+const PaymentLoginPage = require('../pages/PaymentLoginPage');
+
+const puppeteer = require('puppeteer');
+console.log("GLOBALS: " + global);
+
+let page;
+let browser;
+const bwidth = 1280;
+const bheight = 1024;
+jest.setTimeout(5000000);
+
+describe('Test', () => {
+	
+	
+	beforeAll(async () => {
+		browser = await puppeteer.launch({headless: false, args: ['--no-sandbox']}); // , args: ['--proxy-server=tyshchenko:alexalex@pswdf216.kriegerit.de:8080']
+		page = await browser.pages().then(pageArray => pageArray[0]);
+		await page.setViewport({width: bwidth, height: bheight} )
+		// Cookies
+		await page.goto(global.host, {waitUntil: 'networkidle0'});
+		const cookiesSet = await page.cookies();
+		const cookie = cookiesSet.find(o => o.name === 'MULTIGROUP_TEST');
+        const value2 = cookie["value"].replace(/^j\%3A\%5B\d*\%2C\d*/, "j%3A%5B99%2C99")
+        await page._client.send('Network.clearBrowserCookies');
+
+		await page.setCookie({
+		  'name': 'MULTIGROUP_TEST',
+		  'value': value2
+		});
+
+	});
+
+	beforeEach(async () => {
+
+	});
+
+	// afterAll(async () => {
+	// 	await browser.close();
+	// });
+
+	// it("Hoeffner", async () => {
+	//     await page.goto(global.host + "/sofas");
+	//     // await  page.waitForNavigation({ waitUntil: 'networkidle0' }),
+	//     await  console.log("Loaded: " + page.url());
+	//      await page.screenshot({path: './example.png'});
+		
+
+	// });
+
+	it("Article", async () => {
+		await page.goto(global.host + "/artikel/21409193", {waitUntil: 'load'});
+		
+		const article = new ArticlePage(page);
+		await article.zipCodeInput(global.zip);
+		await article.addToCartLogistic();
+		await article.goToCartButton();
+
+		const cart = new CartPage(page);
+		await cart.goToCheckout();
+
+		const login = new PaymentLoginPage(page);
+		await login.guestLogin();
+
+		const addressPage = new AddressPage(page);
+		addressPage.salutationSelect("Herr");
+        await addressPage.firstnameInput('Testperson-de');
+		await addressPage.lastnameInput('Approved');
+		await addressPage.streetnameInput('Hellersbergstraße');
+		await addressPage.streetNumberInput( '14');
+		await addressPage.zipCodeInput( global.zip);
+		await addressPage.townInput('Neuss');
+		await addressPage.emailInput(global.email);
+		await addressPage.phoneAreaInput('0179');
+		await addressPage.phoneInput('1231212');
+		await addressPage.submitAddress();
+		await addressPage.confirmAddress();
+
+        // const payment = new PaymentMethodPage(page);
+        // payment.selectPayment("paypal");
+        // payment.confirmPayment("paypal");
+
+	});
+
+});
