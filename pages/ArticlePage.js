@@ -7,12 +7,12 @@ class ArticlePage extends Page {
     }
 
     async addToCart() { 
-    	this.page.click("#articlePresentationAddToCart button#add-to-cart") 
+    	this.page.click("#articlePresentationAddToCart button#add-to-cart");
     }
 
     async addToCartLogistic() { 
-    	await this.page.waitForSelector('#add-to-cart-logistic:not(.button--hidden)') 
-		this.page.click("#add-to-cart-logistic")  
+    	await this.page.waitForSelector('#add-to-cart-logistic:not(.button--hidden)');
+		this.page.click("#add-to-cart-logistic");
 	}
 
 	async goToCartButton() {
@@ -23,11 +23,11 @@ class ArticlePage extends Page {
 
 
     async zipCodeInput(zip) {
-    	await this.page.type(".article__articlePresentation #zipcode-logistic-input", zip, { delay: 100 })
+    	await this.page.type(".article__articlePresentation #zipcode-logistic-input", zip, { delay: 100 });
     	  }
 
     async waitForCartOverlay() {
-    	await this.page.waitForSelector('#overlayRight.overlay__content--activeRight .addToCartOverlay', {visible:true})
+    	await this.page.waitForSelector('#overlayRight.overlay__content--activeRight .addToCartOverlay', {visible:true});
     }
  
 }

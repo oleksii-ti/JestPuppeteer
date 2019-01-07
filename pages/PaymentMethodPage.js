@@ -2,16 +2,12 @@ const Page = require('./Page');
 
 class PaymentMethodPage extends Page  {
     async selectPayment(type) {
-        console.info('Start wait')
-        await this.page.waitForNavigation({ waitUntil: 'load' });
-        console.info('Finish wait')
-        this.page.click("." + type + "PaymentForm__radioSelect");
+        await this.page.click("." + type + "PaymentForm__radioSelect");
    }
 
     async confirmPayment(type) {
-    
-        console.info("." + type + "PaymentForm button")
-        this.page.click("." + type + "PaymentForm button");
+        await this.page.click("." + type + "PaymentForm button");
+        await this.page.waitForNavigation({ waitUntil: 'load' });
    }
 
 // 
