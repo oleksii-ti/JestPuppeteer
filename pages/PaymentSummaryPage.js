@@ -10,7 +10,7 @@ class PaymentSummaryPage extends Page {
 
     async submitPayment() {
     	await this.page.click("#buyNowSubmitId");
-        await this.page.waitForNavigation();
+        await this.page.waitForNavigation({waitUntil: "networkidle0"});
     }
 }
 

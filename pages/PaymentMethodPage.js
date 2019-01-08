@@ -3,18 +3,17 @@ const Page = require('./Page');
 class PaymentMethodPage extends Page  {
     async selectPayment(type) {
         await this.page.click("." + type + "PaymentForm__radioSelect");
+        // await this.page.waitFor(500);
+
    }
 
     async confirmPayment(type) {
-        await this.page.click("." + type + "PaymentForm button");
-        await this.page.waitForNavigation({ waitUntil: 'load' });
+        await this.page.waitForSelector(".paypalPaymentForm__paymentContent", {visible: true});
+        this.page.click("." + type + "PaymentForm button");
+        await this.page.waitForNavigation({waitUntil: "networkidle0"});
    }
 
-// 
 }
 
 
 module.exports = PaymentMethodPage
-
-// let idAttribute = await page.$eval('div', div => div.id);
-// #responsive > div.mainContent > div.container > div.wrapper--b.cartOverviewContent > div.cartOverview__cart > div.cartOverview > div.cartOverview__checkoutButton > button

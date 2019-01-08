@@ -41,7 +41,7 @@ class AddressPage extends Page {
 	async confirmAddress() {
         await this.page.waitForSelector("#responsive > div.fancybox-overlay.fancybox-overlay-fixed > div > div > div > div > div > div > div:nth-child(2) > input")
 		await this.page.click("#responsive > div.fancybox-overlay.fancybox-overlay-fixed > div > div > div > div > div > div > div:nth-child(2) > input")
-        await this.page.waitForNavigation();
+        await this.page.waitForNavigation({waitUntil: "networkidle0"});
 
 	}
 }
