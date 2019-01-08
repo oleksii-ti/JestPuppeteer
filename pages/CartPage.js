@@ -6,11 +6,7 @@ class CartPage extends Page  {
         this.page.click(".summaryBox__totalPriceAndButton button.button.button--advanceToCheckout .button__label--advanceToCheckout");
         await this.page.waitForNavigation({waitUntil: "networkidle0"});
    }
-// 
+
 }
 
-
 module.exports = CartPage
-
-// let idAttribute = await page.$eval('div', div => div.id);
-// #responsive > div.mainContent > div.container > div.wrapper--b.cartOverviewContent > div.cartOverview__cart > div.cartOverview > div.cartOverview__checkoutButton > button

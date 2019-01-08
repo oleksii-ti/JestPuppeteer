@@ -1,9 +1,4 @@
-const ArticlePage = require('../pages/ArticlePage');
-const CartPage = require('../pages/CartPage');
-const AddressPage = require('../pages/AddressPage');
-const PaymentMethodPage = require('../pages/PaymentMethodPage');
-const PaymentLoginPage = require('../pages/PaymentLoginPage');
-const PaymentSummaryPage = require('../pages/PaymentSummaryPage');
+require("../commonTestRequirements");
 
 const puppeteer = require('puppeteer');
 console.log("GLOBALS: " + global);
@@ -40,7 +35,7 @@ describe('Test', () => {
 	});
 
 	afterAll(async () => {
-		await page.waitFor(5000);
+		await page.waitFor(2000);
 		await browser.close();
 	});
 
@@ -54,7 +49,7 @@ describe('Test', () => {
 	// });
 
 	it("Article", async () => {
-		await page.goto(global.host + "/artikel/21409193", {waitUntil: 'load'});
+		await page.goto(global.host + global.defaultArtikel, {waitUntil: 'load'});
 		
 		const article = new ArticlePage(page);
 		await article.zipCodeInput(global.zip);
@@ -91,6 +86,9 @@ describe('Test', () => {
 		const summary = new PaymentSummaryPage(page);
         await summary.termsAndConditions();
         await summary.submitPayment();
+        const paypal = new PayPal(page);
+        // await page.waitFor(999999);
+        await paypal.confirmPaypalForm();
         
 
 	});

@@ -23,7 +23,7 @@ class ArticlePage extends Page {
 
 
     async zipCodeInput(zip) {
-    	await this.page.type(".article__articlePresentation #zipcode-logistic-input", zip, { delay: 100 });
+    	await this.page.type(".article__articlePresentation #zipcode-logistic-input", zip, { delay: 200 });
     	  }
 
     async waitForCartOverlay() {
@@ -32,7 +32,4 @@ class ArticlePage extends Page {
  
 }
 
-
 module.exports = ArticlePage
-
-// let idAttribute = await page.$eval('div', div => div.id);

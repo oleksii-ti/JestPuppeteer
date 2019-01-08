@@ -47,5 +47,3 @@ class AddressPage extends Page {
 }
 
 module.exports = AddressPage;
-
-// let idAttribute = await page.$eval('div', div => div.id);
