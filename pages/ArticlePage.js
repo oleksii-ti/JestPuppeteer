@@ -1,7 +1,9 @@
 const Page = require('./Page');
 
 class ArticlePage extends Page {
-
+    constructor(page) {
+        super(page)
+    }
     async getTitle() {
         return this.page.title();
     }
@@ -12,7 +14,7 @@ class ArticlePage extends Page {
 
     async addToCartLogistic() { 
     	await this.page.waitForSelector('#add-to-cart-logistic:not(.button--hidden)');
-		this.page.click("#add-to-cart-logistic");
+		await this.page.click("#add-to-cart-logistic");
 	}
 
 	async goToCartButton() {
@@ -23,7 +25,7 @@ class ArticlePage extends Page {
 
 
     async zipCodeInput(zip) {
-    	await this.page.type(".article__articlePresentation #zipcode-logistic-input", zip, { delay: 200 });
+    	await this.page.type(".article__articlePresentation #zipcode-logistic-input", zip, { delay: 100 });
     	  }
 
     async waitForCartOverlay() {

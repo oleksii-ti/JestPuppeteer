@@ -13,4 +13,6 @@ global.PaymentMethodPage = smartRequire('pages/PaymentMethodPage');
 global.PaymentLoginPage = smartRequire('pages/PaymentLoginPage');
 global.PaymentSummaryPage = smartRequire('pages/PaymentSummaryPage');
 global.PayPal = smartRequire('pages/checkout/PayPalPage.js');
+global.ThankYouPage = smartRequire('pages/ThankYouPage.js');
+
 

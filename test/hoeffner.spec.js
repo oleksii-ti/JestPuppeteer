@@ -9,7 +9,7 @@ const bwidth = 1280;
 const bheight = 1024;
 jest.setTimeout(5000000);
 
-describe('Test', () => {
+describe('Checkout', () => {
 	
 	
 	beforeAll(async () => {
@@ -28,6 +28,9 @@ describe('Test', () => {
 		  'value': value2
 		});
 
+		const cookiesSet1 = await page.cookies();
+		console.log(cookiesSet1.find(o => o.name === 'MULTIGROUP_TEST')["value"]);
+
 	});
 
 	beforeEach(async () => {
@@ -39,16 +42,8 @@ describe('Test', () => {
 		await browser.close();
 	});
 
-	// it("Hoeffner", async () => {
-	//     await page.goto(global.host + "/sofas");
-	//     // await  page.waitForNavigation({ waitUntil: 'networkidle0' }),
-	//     await  console.log("Loaded: " + page.url());
-	//      await page.screenshot({path: './example.png'});
-		
 
-	// });
-
-	it("Article", async () => {
+	it("PayPal", async () => {
 		await page.goto(global.host + global.defaultArtikel, {waitUntil: 'load'});
 		
 		const article = new ArticlePage(page);
@@ -61,23 +56,8 @@ describe('Test', () => {
 
 		const login = new PaymentLoginPage(page);
 		await login.login("test-automation.hoeffner@neuland-bfi.de");
-		await login.password("123456qwertz");	
+		await login.password("123456qwertz");
 		await login.submitLogin();
-
-
-		// const addressPage = new AddressPage(page);
-		// await addressPage.salutationSelect("HERR");
-  //       await addressPage.firstnameInput('Testperson-de');
-		// await addressPage.lastnameInput('Approved');
-		// await addressPage.streetnameInput('Hellersbergstraße');
-		// await addressPage.streetNumberInput( '14');
-		// await addressPage.zipCodeInput( global.zip);
-		// await addressPage.townInput('Neuss');
-		// await addressPage.emailInput(global.email);
-		// await addressPage.phoneAreaInput('0179');
-		// await addressPage.phoneInput('1231212');
-		// await addressPage.submitAddress();
-		// await addressPage.confirmAddress();
 
         const payment = new PaymentMethodPage(page);
         await payment.selectPayment("paypal");
@@ -86,10 +66,12 @@ describe('Test', () => {
 		const summary = new PaymentSummaryPage(page);
         await summary.termsAndConditions();
         await summary.submitPayment();
+
         const paypal = new PayPal(page);
-        // await page.waitFor(999999);
         await paypal.confirmPaypalForm();
-        
+
+        // const thankYou = new ThankYouPage(page);
+        // expect(thankYou.successContainer).toContain("Vielen Dank!");
 
 	});
 
