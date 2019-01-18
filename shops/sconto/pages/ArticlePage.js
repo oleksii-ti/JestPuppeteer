@@ -1,4 +1,4 @@
-const ArticlePage = require('../../pages/ArticlePage');
+const ArticlePage = require('../../../pages/ArticlePage');
 
 class ScontoArticlePage extends ArticlePage {
 	constructor(page) {
@@ -6,12 +6,11 @@ class ScontoArticlePage extends ArticlePage {
     }
 
     //Click twice because of temporary issue with campaigns 
-    async addToCartLogistic() { 
-    	await console.log("TEEEEEEEEEEEE");
-    	await this.page.waitForSelector('#add-to-cart-logistic:not(.button--hidden)');
-		await this.page.click('#add-to-cart-logistic:not(.button--hidden)');
-		await sthis.page.click('#add-to-cart-logistic');
-	} 
+    async addToCartLogistic() {
+    	await this.page.waitForSelector('#articlePresentationAddToCart button#add-to-cart-logistic', {visible: true});
+		await this.page.click('#articlePresentationAddToCart button#add-to-cart-logistic');
+        await this.page.waitFor(77771)
+	}
 }
 
 module.exports = ScontoArticlePage

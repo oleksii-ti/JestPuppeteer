@@ -14,7 +14,7 @@ class ArticlePage extends Page {
 
     async addToCartLogistic() { 
     	await this.page.waitForSelector('#add-to-cart-logistic:not(.button--hidden)');
-		await this.page.click("#add-to-cart-logistic");
+		this.page.click("#add-to-cart-logistic");
 	}
 
 	async goToCartButton() {
@@ -23,9 +23,11 @@ class ArticlePage extends Page {
         await this.page.waitForNavigation({waitUntil: "networkidle0"});
 	}
 
-
     async zipCodeInput(zip) {
-    	await this.page.type(".article__articlePresentation #zipcode-logistic-input", zip, { delay: 100 });
+        const selector = ".article__articlePresentation #zipcode-logistic-input";
+        await this.page.waitForSelector(selector);
+        await this.page.evaluate( () => document.getElementById("zipcode-logistic-input").value = "");
+        await this.page.type(selector, zip, { delay: 200 });
     	  }
 
     async waitForCartOverlay() {

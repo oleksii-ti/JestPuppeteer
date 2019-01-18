@@ -1,6 +1,6 @@
 function smartRequire(fileName) {
 	try {
-		return require("./shops/" + global.shopId + "/" + fileName);
+        return require("./shops/" + global.shopId + "/" + fileName);
 	} catch (e) {
 		return require('./' + fileName);
 	};
@@ -15,4 +15,4 @@ global.PaymentSummaryPage = smartRequire('pages/PaymentSummaryPage');
 global.PayPal = smartRequire('pages/checkout/PayPalPage.js');
 global.ThankYouPage = smartRequire('pages/ThankYouPage.js');
 
-
+global.LoginAction = smartRequire('actions/LoginAction');

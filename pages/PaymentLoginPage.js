@@ -4,7 +4,9 @@ class PaymentLoginPage extends Page {
 
     async guestLogin() {
         await this.page.waitForSelector("#login-form #guestLogin");
-    	this.page.click("#login-form #guestLogin");
+        // await this.page.evaluate(() => {debugger;});
+
+        await this.page.click("#login-form #guestLogin");
         await this.page.waitForNavigation({waitUntil: "networkidle0"});
     }
 

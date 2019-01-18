@@ -1,4 +1,4 @@
-class Page {
+class BasePage {
 	constructor(page) {
 		this.page = page;
 		this.page.addStyleTag({content: "html * { transition: none!important; }"});
@@ -6,4 +6,4 @@ class Page {
 }
 
 
-module.exports = Page
+module.exports = BasePage

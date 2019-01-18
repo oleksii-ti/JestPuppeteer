@@ -5,15 +5,20 @@ console.log("GLOBALS: " + global);
 
 let page;
 let browser;
-const bwidth = 1280;
-const bheight = 1024;
-jest.setTimeout(5000000);
+const bwidth = 1024;
+const bheight = 768;
+jest.setTimeout(100000);
 
 describe('Checkout', () => {
-	
-	
-	beforeAll(async () => {
-		browser = await puppeteer.launch({headless: false}); // , args: ['--proxy-server=tyshchenko:alexalex@pswdf216.kriegerit.de:8080']
+
+
+    beforeAll(async () => {
+
+
+        browser = await puppeteer.launch({headless: false, devtools: false,  args: [
+                '--disable-infobars',
+                '--window-size=${ bwidth },${ bheight }'
+            ],}); // , args: ['--proxy-server=tyshchenko:alexalex@pswdf216.kriegerit.de:8080']
 		page = await browser.pages().then(pageArray => pageArray[0]);
 		await page.setViewport({width: bwidth, height: bheight} )
 		// Cookies
@@ -31,7 +36,12 @@ describe('Checkout', () => {
 		const cookiesSet1 = await page.cookies();
 		console.log(cookiesSet1.find(o => o.name === 'MULTIGROUP_TEST')["value"]);
 
-	});
+        await page.on("pageerror", function(err) {
+            theTempValue = err.toString();
+            console.log("Page error: " + theTempValue);
+        });
+
+    });
 
 	beforeEach(async () => {
 
@@ -43,21 +53,22 @@ describe('Checkout', () => {
 	});
 
 
-	it("PayPal", async () => {
-		await page.goto(global.host + global.defaultArtikel, {waitUntil: 'load'});
+	it.each(["guest"])('PayPal as %s', async (user) => {
+
+        await page.goto(global.host + global.defaultArtikel, {waitUntil: 'load'});
 		
 		const article = new ArticlePage(page);
 		await article.zipCodeInput(global.zip);
-		await article.addToCartLogistic();
+        // await page.evaluate(() => {debugger;});
+        await article.addToCartLogistic();
 		await article.goToCartButton();
 
 		const cart = new CartPage(page);
 		await cart.goToCheckout();
 
-		const login = new PaymentLoginPage(page);
-		await login.login("test-automation.hoeffner@neuland-bfi.de");
-		await login.password("123456qwertz");
-		await login.submitLogin();
+		const loginAction = new LoginAction(page);
+		await loginAction.checkoutAs(user);
+
 
         const payment = new PaymentMethodPage(page);
         await payment.selectPayment("paypal");
