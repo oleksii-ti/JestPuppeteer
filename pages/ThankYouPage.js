@@ -18,6 +18,10 @@ class ThankYouPage extends Page  {
     	this.page.click("#register-afterwards-form") 
     }
 
+    async trustedShops() {
+	    await this.page.$(".etrusted-checkout-card__container")
+    }
+
     async orderId() {
     	driver.executeScript('return this.page.click("#tsCheckoutOrderNr").text();')
     }

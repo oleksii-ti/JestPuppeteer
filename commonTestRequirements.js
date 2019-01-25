@@ -6,6 +6,7 @@ function smartRequire(fileName) {
 	};
 }
 
+global.Page = smartRequire('pages/Page');
 global.ArticlePage = smartRequire('pages/ArticlePage');
 global.CartPage = smartRequire('pages/CartPage');
 global.AddressPage = smartRequire('pages/AddressPage');

@@ -36,13 +36,13 @@ class AddressPage extends Page {
     }
 	async submitAddress() {
 		this.page.click("#address-submit")
+		this.page.waitForSelector(".fancybox-overlay.fancybox-overlay-fixed")
 	}
 
 	async confirmAddress() {
-        await this.page.waitForSelector("#responsive > div.fancybox-overlay.fancybox-overlay-fixed > div > div > div > div > div > div > div:nth-child(2) > input")
-		await this.page.click("#responsive > div.fancybox-overlay.fancybox-overlay-fixed > div > div > div > div > div > div > div:nth-child(2) > input")
+        await this.page.waitForSelector(".fancybox-overlay.fancybox-overlay-fixed > div > div > div > div > div > div > div:nth-child(2) > input", {visible: true})
+        await this.page.click(".fancybox-overlay.fancybox-overlay-fixed > div > div > div > div > div > div > div:nth-child(2) > input")
         await this.page.waitForNavigation({waitUntil: "networkidle0"});
-
 	}
 }
 

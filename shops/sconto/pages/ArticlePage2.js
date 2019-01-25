@@ -1,6 +1,6 @@
-const ArticlePage = require('../../../pages/ArticlePage');
+const ArticlePage2 = require('../../../pages/ArticlePage');
 
-class ScontoArticlePage extends ArticlePage {
+class ScontoArticlePage extends ArticlePage2 {
 	constructor(page) {
         super(page)
     }
