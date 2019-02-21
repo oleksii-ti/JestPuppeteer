@@ -22,7 +22,7 @@ class ArticlePage extends Page {
 	async goToCartButton() {
         await super.log("goToCartButton", async () => {
             await this.waitForCartOverlay();
-            this.page.click("#overlayRight.overlay__content--activeRight .addToCartOverlay .addToCartOverlay__footerToCart");
+            await this.page.click("#overlayRight.overlay__content--activeRight .addToCartOverlay .addToCartOverlay__footerToCart");
             await this.page.waitForNavigation({waitUntil: "networkidle0"});
         });
     }

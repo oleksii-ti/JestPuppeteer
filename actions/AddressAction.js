@@ -1,8 +1,8 @@
 // const addressPage = new AddressPage(page);
 		// await addressPage.salutationSelect("HERR");
-  //       await addressPage.firstnameInput('Testperson-de');
-		// await addressPage.lastnameInput('Approved');
-		// await addressPage.streetnameInput('Hellersbergstraße');
+  //       await addressPage.firstNameInput('Testperson-de');
+		// await addressPage.lastNameInput('Approved');
+		// await addressPage.streetNameInput('Hellersbergstraße');
 		// await addressPage.streetNumberInput( '14');
 		// await addressPage.zipCodeInput( global.zip);
 		// await addressPage.townInput('Neuss');

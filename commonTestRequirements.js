@@ -1,9 +1,9 @@
 function smartRequire(fileName) {
 	try {
         return require("./shops/" + global.shopId + "/" + fileName);
-	} catch (e) {
-		return require('./' + fileName);
-	};
+    } catch (e) {
+        return require('./' + fileName);
+    };
 }
 
 global.Page = smartRequire('pages/Page');
@@ -15,5 +15,11 @@ global.PaymentLoginPage = smartRequire('pages/PaymentLoginPage');
 global.PaymentSummaryPage = smartRequire('pages/PaymentSummaryPage');
 global.PayPal = smartRequire('pages/checkout/PayPalPage.js');
 global.ThankYouPage = smartRequire('pages/ThankYouPage.js');
+global.MattressAdvicePage = smartRequire('pages/form/MattressAdvicePage.js');
+global.ContactFormPage = smartRequire('pages/form/ContactFormPage.js');
+global.NewsLetterPage = smartRequire('pages/form/NewsLetterPage.js');
+global.KitchenFormPage = smartRequire('pages/form/KitchenFormPage.js');
+global.KitchenFormAction = smartRequire('pages/actions/forms/KitchenFormAction.js');
 
 global.LoginAction = smartRequire('actions/LoginAction');
+global.CartAction = smartRequire('actions/CartAction');

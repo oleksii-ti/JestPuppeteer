@@ -1,6 +1,6 @@
 const Page = require('./Page');
 
-class ThankYouPage extends Page  {
+class ThankYouPage  {
 
 	async successContainer() { 
 		this.page.$eval(".orderSuccessMessage", el => el.textContent) 
@@ -19,7 +19,7 @@ class ThankYouPage extends Page  {
     }
 
     async trustedShops() {
-	    await this.page.$(".etrusted-checkout-card__container")
+	    await this.page.$eval(".etrusted-checkout-card__container")
     }
 
     async orderId() {

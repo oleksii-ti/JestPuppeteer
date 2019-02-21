@@ -1,4 +1,4 @@
-require("../commonTestRequirements");
+require("../../commonTestRequirements");
 
 const puppeteer = require('puppeteer');
 console.log("GLOBALS: " + global);
@@ -9,7 +9,7 @@ const bwidth = 1280;
 const bheight = 720;
 jest.setTimeout(100000);
 
-describe('Checkout', () => {
+describe( "Forms", () => {
 
 
     beforeAll(async () => {
@@ -31,7 +31,7 @@ describe('Checkout', () => {
     }
 
 
-	beforeEach(async () => {
+    beforeEach(async () => {
         // Def page
         page = await newPageWithNewContext(browser)
         await page.setViewport({width: bwidth, height: bheight} )
@@ -53,7 +53,13 @@ describe('Checkout', () => {
         await page.on("pageerror", function(err) {
             theTempValue = err.toString();
 
-            console.log("Page error: " + theTempValue);  });
+            console.log("Page error: " + theTempValue);
+        });
+        await page.on("error", function(err) {
+            theTempValue = err.toString();
+
+            console.log("Page error: " + theTempValue);
+        });
         // await page.setRequestInterception(true);
 
 
@@ -61,7 +67,7 @@ describe('Checkout', () => {
 
         // Catch     requests
         // page.on('request', request => {
-            // console.log(request.url()); });
+        // console.log(request.url()); });
 
     });
 
@@ -69,39 +75,29 @@ describe('Checkout', () => {
         page.close();
     });
 
-	afterAll(async () => {
-		await page.waitFor(1000);
-		await browser.close();
-	});
+    afterAll(async () => {
+        await page.waitFor(1000);
+        await browser.close();
+    });
 
+    it("Contact", async () => {
+        await page.goto(global.host + "/kontakt", {waitUntil: "load"});
+        const contact = new ContactFormPage(page);
+        await contact.questionSelectBox(global.formData.subject);
+        await contact.locationSelectBox(global.formData.location);
+        await contact.salutationSelectBox("Herr");
+        await contact.firstNameInput("Tester");
+        await contact.lastNameInput("Test");
+        await contact.streetNameInput("Teststraße");
+        await contact.housenumberInput("7");
+        await contact.zipCodeInput("51503");
+        await contact.cityInput("Rösrath");
+        await contact.emailInput(global.formData.email);
+        await contact.telephoneInput("0231 - 263381");
+        await contact.customerNumberInput("09057647");
+        await contact.purchaseContractNumberInput("84376658384");
+        await contact.articleNumberInput("4756584");
+        await contact.commentInput("Kein Kommentar.");
 
-	it.each(["guest"])('PayPal as %s', async (user) => {
-        await page.goto(global.host + global.defaultArtikel, {waitUntil: 'load'});
-
-        const article = new ArticlePage(page);
-        await article.zipCodeInput(global.zip);
-        await article.addToCartLogistic();
-        await article.goToCartButton();
-
-        const cartAction = new CartAction(page);
-        await cartAction.proceedToSummaryPayment();
-
-        const loginAction = new LoginAction(page);
-        await loginAction.checkoutAs(user);
-
-
-        const payment = new PaymentMethodPage(page);
-        await payment.selectPayment("paypal");
-        await payment.confirmPayment("paypal");
-
-        const summary = new PaymentSummaryPage(page);
-        await summary.termsAndConditions();
-        await summary.submitPayment();
-
-        const paypal = new PayPal(page);
-        await paypal.confirmPaypalForm();
-
-        // const thankYou = new ThankYouPage(page);
-        // await expect(thankYou.trustedShops()).toBeTruthy()
-    	})
-	})
+    })
+})

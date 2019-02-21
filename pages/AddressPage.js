@@ -35,13 +35,15 @@ class AddressPage extends Page {
     	await this.page.type("#phone", text);
     }
 	async submitAddress() {
-		this.page.click("#address-submit")
-		this.page.waitForSelector(".fancybox-overlay.fancybox-overlay-fixed")
+		this.page.click("#address-submit");
+		this.page.waitForSelector(".fancybox-overlay.fancybox-overlay-fixed");
 	}
 
 	async confirmAddress() {
-        await this.page.waitForSelector(".fancybox-overlay.fancybox-overlay-fixed > div > div > div > div > div > div > div:nth-child(2) > input", {visible: true})
-        await this.page.click(".fancybox-overlay.fancybox-overlay-fixed > div > div > div > div > div > div > div:nth-child(2) > input")
+        await this.page.waitForSelector(".fancybox-overlay.fancybox-overlay-fixed", {visible:true});
+        await this.page.waitFor(250);
+        // await this.page.waitFor({until:"networkidle0"})
+        await this.page.click(".fancybox-overlay.fancybox-overlay-fixed > div > div > div > div > div > div > div:nth-child(2) > input");
         await this.page.waitForNavigation({waitUntil: "networkidle0"});
 	}
 }

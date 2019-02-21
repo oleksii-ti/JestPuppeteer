@@ -10,7 +10,17 @@ module.exports = {
             email: "test-automation.hoeffner@neuland-bfi.de",
 			password: "123456qwertz"
         },
-		defaultArtikel: "/artikel/21406881"
+        formData: {
+            email: "kontaktformular-entwicklung@kbs.krieger.de",
+            location: "Köln-Rösrath",
+            subject: "Sonstiges"
+        },
+        kitchenForm: {
+    		url: "/kuechenstudio/beratungstermin",
+			location: "SRR"
+        },
+
+        defaultArtikel: "/artikel/21406881"
 		
 	}
 };

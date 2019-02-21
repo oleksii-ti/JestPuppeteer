@@ -1,4 +1,4 @@
-require("../commonTestRequirements");
+require("../../commonTestRequirements");
 
 const puppeteer = require('puppeteer');
 console.log("GLOBALS: " + global);
@@ -9,7 +9,7 @@ const bwidth = 1280;
 const bheight = 720;
 jest.setTimeout(100000);
 
-describe('Checkout', () => {
+describe( 'Forms', () => {
 
 
     beforeAll(async () => {
@@ -31,7 +31,7 @@ describe('Checkout', () => {
     }
 
 
-	beforeEach(async () => {
+    beforeEach(async () => {
         // Def page
         page = await newPageWithNewContext(browser)
         await page.setViewport({width: bwidth, height: bheight} )
@@ -53,7 +53,13 @@ describe('Checkout', () => {
         await page.on("pageerror", function(err) {
             theTempValue = err.toString();
 
-            console.log("Page error: " + theTempValue);  });
+            console.log("Page error: " + theTempValue);
+        });
+        await page.on("error", function(err) {
+            theTempValue = err.toString();
+
+            console.log("Page error: " + theTempValue);
+        });
         // await page.setRequestInterception(true);
 
 
@@ -61,7 +67,7 @@ describe('Checkout', () => {
 
         // Catch     requests
         // page.on('request', request => {
-            // console.log(request.url()); });
+        // console.log(request.url()); });
 
     });
 
@@ -69,39 +75,22 @@ describe('Checkout', () => {
         page.close();
     });
 
-	afterAll(async () => {
-		await page.waitFor(1000);
-		await browser.close();
-	});
+    afterAll(async () => {
+        await page.waitFor(1000);
+        await browser.close();
+    });
 
 
-	it.each(["guest"])('PayPal as %s', async (user) => {
-        await page.goto(global.host + global.defaultArtikel, {waitUntil: 'load'});
+    it('MattressAdvice', async () => {
+        await page.goto(global.host + "/telefonberatung", {waitUntil: 'load'});
+        const mattressPage = new MattressAdvicePage(page);
+        await mattressPage.salutationSelectBox("Frau");
+        await mattressPage.firstnameInput('Tester');
+        await mattressPage.lastnameInput('Test');
+        await mattressPage.areaCodeInput('030');
+        await mattressPage.telephoneNumberInput('12345');
+        await mattressPage.emailAddressInput(global.user.email);
+        await mattressPage.commentInput('Termin um 10.00');
 
-        const article = new ArticlePage(page);
-        await article.zipCodeInput(global.zip);
-        await article.addToCartLogistic();
-        await article.goToCartButton();
-
-        const cartAction = new CartAction(page);
-        await cartAction.proceedToSummaryPayment();
-
-        const loginAction = new LoginAction(page);
-        await loginAction.checkoutAs(user);
-
-
-        const payment = new PaymentMethodPage(page);
-        await payment.selectPayment("paypal");
-        await payment.confirmPayment("paypal");
-
-        const summary = new PaymentSummaryPage(page);
-        await summary.termsAndConditions();
-        await summary.submitPayment();
-
-        const paypal = new PayPal(page);
-        await paypal.confirmPaypalForm();
-
-        // const thankYou = new ThankYouPage(page);
-        // await expect(thankYou.trustedShops()).toBeTruthy()
-    	})
-	})
+    })
+})
