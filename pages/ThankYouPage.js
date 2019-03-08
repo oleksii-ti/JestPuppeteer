@@ -1,25 +1,28 @@
 const Page = require('./Page');
 
-class ThankYouPage  {
+class ThankYouPage extends Page {
+    constructor(page) {
+        super(page)
+    }
 
 	async successContainer() { 
 		this.page.$eval(".orderSuccessMessage", el => el.textContent) 
 	}
 
     async newsletterForm() { 
-    	this.page.click("#register-newsletter-form")
-    }
+    	this.page.click("#register-newsletter-form");
+	}
 
     async newsletterEmail() { 
-    	newsletterForm.find("#email")
+    	newsletterForm.find("#email");
     }
 
     async registerForm() { 
-    	this.page.click("#register-afterwards-form") 
+    	this.page.click("#register-afterwards-form");
     }
 
     async trustedShops() {
-	    await this.page.$eval(".etrusted-checkout-card__container")
+	    await this.page.waitForSelector(".etrusted-checkout-card__container");
     }
 
     async orderId() {
@@ -30,4 +33,4 @@ class ThankYouPage  {
 
 }
 
-module.exports = ThankYouPage
+module.exports = ThankYouPage;

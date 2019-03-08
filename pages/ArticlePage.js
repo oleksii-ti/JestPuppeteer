@@ -4,9 +4,6 @@ class ArticlePage extends Page {
     constructor(page) {
         super(page)
     }
-    async getTitle() {
-        return this.page.title();
-    }
 
     async addToCart() {
     	this.page.click("#articlePresentationAddToCart button#add-to-cart");
@@ -22,9 +19,16 @@ class ArticlePage extends Page {
 	async goToCartButton() {
         await super.log("goToCartButton", async () => {
             await this.waitForCartOverlay();
-            await this.page.click("#overlayRight.overlay__content--activeRight .addToCartOverlay .addToCartOverlay__footerToCart");
-            await this.page.waitForNavigation({waitUntil: "networkidle0"});
+            await Promise.all([
+                this.page.click("#overlayRight.overlay__content--activeRight .addToCartOverlay .addToCartOverlay__footerToCart"),
+                this.page.waitForNavigation({waitUntil: "networkidle0"})
+            ]);
         });
+    }
+
+    async mainImage() {
+        await this.page.$$("#articleContentBlock > div.article__articlePresentation > div > div.articlePresentation__image > div.articleImageForADS.slick-initialized.slick-slider > div > div > div.articleImageForADS__image.slick-slide.slick-current.slick-active > a > img");
+
     }
 
     async zipCodeInput(zip) {
@@ -33,7 +37,7 @@ class ArticlePage extends Page {
             await this.page.waitForSelector(selector);
             await this.page.evaluate(_=> { window.scrollBy(0, window.innerHeight); });
             await this.page.evaluate( () => document.getElementById("zipcode-logistic-input").value = "");
-            await this.page.type(selector, zip, { delay: 200 });
+            await this.page.type(selector, zip, { delay: 50 });
         });
 
     }
@@ -45,4 +49,4 @@ class ArticlePage extends Page {
 
 }
 
-module.exports = ArticlePage
+module.exports = ArticlePage;

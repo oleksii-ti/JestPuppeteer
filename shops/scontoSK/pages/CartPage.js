@@ -18,8 +18,10 @@ class ScontoSKCartPage extends CartPage {
     async goToCheckout() {
         // await this.page.evaluate(() => {debugger;});
         await this.page.waitForSelector("#responsive > div.mainContent > div.container > div.wrapper--b.cartOverviewContent > div.cartOverview__cart > div.cartOverview > div.cartOverview__summary > div.cartOverview__summaryBox > div > button");
-        await this.page.click("#responsive > div.mainContent > div.container > div.wrapper--b.cartOverviewContent > div.cartOverview__cart > div.cartOverview > div.cartOverview__summary > div.cartOverview__summaryBox > div > button");
-        await this.page.waitForNavigation({waitUntil: "networkidle0"});
+        await Promise.all([
+            await this.page.click("#responsive > div.mainContent > div.container > div.wrapper--b.cartOverviewContent > div.cartOverview__cart > div.cartOverview > div.cartOverview__summary > div.cartOverview__summaryBox > div > button"),
+            await this.page.waitForNavigation({waitUntil: "networkidle0"})
+        ]);
     }
 }
 

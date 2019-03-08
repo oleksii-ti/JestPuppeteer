@@ -80,7 +80,11 @@ describe( 'Forms', () => {
         await browser.close();
     });
 
-
+    // if(global.shopId != "hoeffner") {
+    //     test.only('skip', () => {
+    //         console.log('skipping tests');
+    //     });
+    // }
     it('MattressAdvice', async () => {
         await page.goto(global.host + "/telefonberatung", {waitUntil: 'load'});
         const mattressPage = new MattressAdvicePage(page);

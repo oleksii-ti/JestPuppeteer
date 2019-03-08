@@ -1,3 +1,5 @@
+require('./helpers/PuppeteerHelper');
+
 function smartRequire(fileName) {
 	try {
         return require("./shops/" + global.shopId + "/" + fileName);
@@ -19,7 +21,7 @@ global.MattressAdvicePage = smartRequire('pages/form/MattressAdvicePage.js');
 global.ContactFormPage = smartRequire('pages/form/ContactFormPage.js');
 global.NewsLetterPage = smartRequire('pages/form/NewsLetterPage.js');
 global.KitchenFormPage = smartRequire('pages/form/KitchenFormPage.js');
-global.KitchenFormAction = smartRequire('pages/actions/forms/KitchenFormAction.js');
+global.KitchenFormAction = smartRequire('actions/forms/KitchenFormAction.js');
 
 global.LoginAction = smartRequire('actions/LoginAction');
 global.CartAction = smartRequire('actions/CartAction');

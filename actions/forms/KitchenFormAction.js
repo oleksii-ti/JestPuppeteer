@@ -13,4 +13,4 @@ class KitchenFormAction {
     }
 }
 
-module.exports = CartAction
+module.exports = KitchenFormAction;

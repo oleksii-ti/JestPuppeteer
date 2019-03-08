@@ -53,10 +53,11 @@ class KitchenFormPage extends Page {
     }
 
     async submitButton() {
-        await this.page.click("#submit-button");
-        await this.page.waitForNavigation({waitUntil: "networkidle0"});
+        await Promise.all([
+            this.page.click("#submit-button"),
+            this.page.waitForNavigation({waitUntil: "networkidle2"})
+        ]);
     }
-
 
 }
 

@@ -86,7 +86,6 @@ describe( "Forms", () => {
         const kitchen = new KitchenFormPage(page);
         await kitchenAction.setLocation();
 
-
         await kitchen.salutationSelectBox("Frau");
         await kitchen.firstnameInput('Tester');
         await kitchen.lastnameInput('Test');

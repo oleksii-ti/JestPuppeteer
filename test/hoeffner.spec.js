@@ -5,8 +5,8 @@ console.log("GLOBALS: " + global);
 
 let page;
 let browser;
-const bwidth = 1280;
-const bheight = 720;
+const bwidth = 1300;
+const bheight = 900;
 jest.setTimeout(100000);
 
 describe('Checkout', () => {
@@ -15,7 +15,7 @@ describe('Checkout', () => {
     beforeAll(async () => {
 
 
-        browser = await puppeteer.launch({headless: false, devtools: false, args: [
+        browser = await puppeteer.launch({headless: false, devtools: true, args: [
                 '--disable-infobars',
                 '--disable-features=site-per-process',
                 '--window-size=${ bwidth },${ bheight }'
@@ -24,9 +24,10 @@ describe('Checkout', () => {
     });
 
     async function newPageWithNewContext(browser) {
-        const {browserContextId} = await browser._connection.send('Target.createBrowserContext');
-        page = await browser._createPageInContext(browserContextId);
-        page.browserContextId = browserContextId;
+        // const {browserContextId} = await browser._connection.send('Target.createBrowserContext');
+        // page = await browser._createPageInContext(browserContextId);
+        page = await browser.newPage();
+        // page.browserContextId = browserContextId;
         return page;
     }
 
@@ -75,7 +76,7 @@ describe('Checkout', () => {
 	});
 
 
-	it.each(["guest"])('PayPal as %s', async (user) => {
+	it.each(["guest", ])('PayPal as %s', async (user) => {
         await page.goto(global.host + global.defaultArtikel, {waitUntil: 'load'});
 
         const article = new ArticlePage(page);
@@ -101,7 +102,8 @@ describe('Checkout', () => {
         const paypal = new PayPal(page);
         await paypal.confirmPaypalForm();
 
-        // const thankYou = new ThankYouPage(page);
-        // await expect(thankYou.trustedShops()).toBeTruthy()
+        const thankYou = new ThankYouPage(page);
+        await thankYou.trustedShops();
+        await page.waitFor(7777);
     	})
-	})
+	});
