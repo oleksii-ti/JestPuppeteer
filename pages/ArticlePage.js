@@ -47,6 +47,16 @@ class ArticlePage extends Page {
         await this.page.waitForSelector("#overlayRight.overlay__content--activeRight .addToCartOverlay");
     }
 
+    //Filters
+    async openFilter(type) {
+        await this.page.click(".filter #" + type);
+        await this.page.waitForSelector("singleFilter__content singleFilter__content--open");
+    }
+
+    async setFilter(type) {
+        await this.page.click("span[data-value=" + type + "]");
+    }
+
 }
 
 module.exports = ArticlePage;

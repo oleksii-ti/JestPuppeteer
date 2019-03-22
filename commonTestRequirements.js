@@ -8,8 +8,10 @@ function smartRequire(fileName) {
     };
 }
 
+global.HybrisClient = smartRequire("helpers/HybrisHelper")
 global.Page = smartRequire('pages/Page');
 global.ArticlePage = smartRequire('pages/ArticlePage');
+global.CatalogPage = smartRequire('pages/CatalogPage');
 global.CartPage = smartRequire('pages/CartPage');
 global.AddressPage = smartRequire('pages/AddressPage');
 global.PaymentMethodPage = smartRequire('pages/PaymentMethodPage');

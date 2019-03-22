@@ -1,4 +1,4 @@
-require("../commonTestRequirements");
+require("../../commonTestRequirements");
 
 const puppeteer = require('puppeteer');
 console.log("GLOBALS: " + global);
@@ -76,7 +76,7 @@ describe('Checkout', () => {
 	});
 
 
-	it.each(["guest", ])('PayPal as %s', async (user) => {
+	it.each(["guest", "user" ])('PayPal as %s', async (user) => {
         await page.goto(global.host + global.defaultArtikel, {waitUntil: 'load'});
 
         const article = new ArticlePage(page);
@@ -92,8 +92,8 @@ describe('Checkout', () => {
 
 
         const payment = new PaymentMethodPage(page);
-        await payment.selectPayment("paypal");
-        await payment.confirmPayment("paypal");
+        await payment.selectPayment("eFinancing");
+        await payment.confirmPayment("eFinancing");
 
         const summary = new PaymentSummaryPage(page);
         await summary.termsAndConditions();
@@ -104,6 +104,5 @@ describe('Checkout', () => {
 
         const thankYou = new ThankYouPage(page);
         await thankYou.trustedShops();
-        await page.waitFor(7777);
     	})
 	});

@@ -7,7 +7,7 @@ module.exports = {
 		host: "https://shop:kbs46042014@stage.sconto.sk",
 		zip: "41460",
         user: {
-            email: "test-automation.hoeffner@neuland-bfi.de",
+            email: "bestellungen_test@kos.krieger.de",
 			password: "123456qwertz"
         },
 		defaultArtikel: "/artikel/413243801"

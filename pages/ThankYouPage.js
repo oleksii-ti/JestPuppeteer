@@ -26,7 +26,10 @@ class ThankYouPage extends Page {
     }
 
     async orderId() {
-    	driver.executeScript('return this.page.click("#tsCheckoutOrderNr").text();')
+        return await this.page.evaluate(() => document.getElementById('tsCheckoutOrderNr').innerText);
+        // await console.log(text);
+        // return text;
+
     }
 
     
