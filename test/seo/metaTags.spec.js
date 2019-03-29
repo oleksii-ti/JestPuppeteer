@@ -78,16 +78,23 @@ describe('Checkout', () => {
 
 
     it.each([
-        ["/sofas", "smart"]
-        // ["/messer", "WMF"],
-        // ["/sofas_wmf",  ""],
-        // ["/glaeser",  "LEONARDO",]
-    ])('SEO %s with %s', async (url, filter) => {
+        // ["/sofas", "smart", ""]
+        ["/messer", "WMF", "/messer_wmf"]
+        // ["/sofas_wmf",  "", ""],
+        // ["/glaeser",  "LEONARDO", ""]
+    ])('SEO %s with %s', async (url, filter, redirect) => {
+        const cmsClient = new CMSClient();
+        const cmsContext = await cmsClient.urlMatcherExport();
+        await console.log(cmsContext);
         await page.goto(global.host + url, {waitUntil: 'load'});
-
         const catalog = new CatalogPage(page);
         await catalog.openFilter("brands");
         await catalog.setFilter(filter);
+        if(redirect != "") {
+            await page.waitForNavigation({waitUntil: "networkidle0"});
+            await expect(page.url()).toContain(redirect);
+
+        }
         await page.waitFor(9999);
 
     })

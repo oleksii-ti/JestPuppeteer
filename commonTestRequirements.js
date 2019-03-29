@@ -9,6 +9,7 @@ function smartRequire(fileName) {
 }
 
 global.HybrisClient = smartRequire("helpers/HybrisHelper")
+global.CMSClient = smartRequire("helpers/CMSHelper")
 global.Page = smartRequire('pages/Page');
 global.ArticlePage = smartRequire('pages/ArticlePage');
 global.CatalogPage = smartRequire('pages/CatalogPage');

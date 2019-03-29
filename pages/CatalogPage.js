@@ -7,6 +7,9 @@ class CatalogPage extends Page {
 
     //Filters
     async openFilter(type) {
+        await this.page.waitForSelector(".filter #" + type + " > div > div > span:nth-child(2)");
+
+        await this.page.waitFor(500);
         await this.page.click(".filter #" + type + " > div > div > span:nth-child(2)");
         await this.page.waitForSelector(".singleFilter__content.singleFilter__content--open");
     }
