@@ -78,23 +78,98 @@ describe('Checkout', () => {
 
 
     it.each([
-        // ["/sofas", "smart", ""]
-        ["/messer", "WMF", "/messer_wmf"]
-        // ["/sofas_wmf",  "", ""],
-        // ["/glaeser",  "LEONARDO", ""]
-    ])('SEO %s with %s', async (url, filter, redirect) => {
-        const cmsClient = new CMSClient();
-        const cmsContext = await cmsClient.urlMatcherExport();
-        await console.log(cmsContext);
-        await page.goto(global.host + url, {waitUntil: 'load'});
-        const catalog = new CatalogPage(page);
-        await catalog.openFilter("brands");
-        await catalog.setFilter(filter);
-        if(redirect != "") {
-            await page.waitForNavigation({waitUntil: "networkidle0"});
-            await expect(page.url()).toContain(redirect);
 
-        }
+        ["/big-sofas", "", "", "index,follow", "/big-sofas", null, null],
+        // ["/big-sofas", "", "?par=val", null, "/big-sofas", null, null],
+        // ["/sofas", "", "", "index,follow", "/sofas", null, "/2"],
+        // ["/sofas", "", "?par=val", null, "/sofas", null, null],
+        // ["/sofas", "/2", "", "index,follow", "/sofas/2", "", "/3"],
+        // ["/sofas", "/2", "?par=val", null, "/sofas", null, null],
+        // ["/sofas", "/3", "", "index,follow", "/sofas/3", "/2", "/4"],
+        // ["/sofas", "/3", "?par=val", null, "/sofas/3", null, null],
+        // ["/geschirrablagen", "", "", "noindex,follow", null, null, null],
+        // ["/geschirrablagen", "", "?par=val", "noindex,follow", null, null, null],
+        // ["/messer_wmf", "", "", "index,follow", "/messer_wmf", null, null],
+        // ["/messer_wmf", "", "?par=val", null, "/messer_wmf", null, null],
+        // ["/wmf", "", "", "index,follow", "/wmf", null, "/2"],
+        // ["/wmf", "", "?par=val", null, "/wmf", null, null]
+
+    ])('Meta Tags %s with %s', async (url, page_url, params, robots, canonical, prev, next) => {
+        const cmsClient = await new CMSClient();
+        const cmsData = await cmsClient.getCMSContext();
+        const cmsEntry = await cmsClient.getSEOData(cmsData, url);
+
+
+        await console.log(cmsEntry);
+
+
+        await page.goto(global.host + url, {waitUntil: 'load'});
+
+
+
+
+
+
+            // if (robots == null) {
+            //     expect(page.$("meta[name='robots']") instanceof geb.navigator.EmptyNavigator
+            // } else if (cmsEntry && cmsEntry["metaRobots"]) {
+            //     expect(page.$("meta[name='robots'][content='%s']", cmsEntry["metaRobots"])
+            //
+            // } else {
+            //     assert
+            //     $("meta[name='robots'][content='${robots}']")
+            // }
+
+            // if (canonical != null) {
+        // await  expect(await page.$("link[rel='canonical']").attribute("href") == "${host}${url}${page}");
+        await  expect(await page.$$eval("link[rel='canonical']", a => a.href) == global.host + url + page_url);
+            // } else {
+            //     assert
+            //     $("link[rel='canonical']") instanceof geb.navigator.EmptyNavigator
+            // }
+
+            // if (prev != null) {
+            //     assert
+            //     $("link[rel='prev']").getAttribute("href") == "${host}${url}${prev}"
+            // } else {
+            //     assert
+            //     $("link[rel='prev']") instanceof geb.navigator.EmptyNavigator
+            // }
+            //
+            // if (next != null) {
+            //     assert
+            //     $("link[rel='next']").getAttribute("href") == "${host}${url}${next}"
+            // } else {
+            //     assert
+            //     $("link[rel='next']") instanceof geb.navigator.EmptyNavigator
+            //
+            // }
+            //
+            // if (cmsEntry && cmsEntry["metaPageTitle"]) {
+            //
+            //     assert driver.getTitle() == cmsEntry["metaPageTitle"]
+            // } else {
+            //     def
+            //     titlePattern = ".* bei ${shopTitle[System.getProperty("
+            //     shopId
+            //     ")]}\$"
+            //     assert
+            //     driver.getTitle() = ~titlePattern
+            // }
+            //
+            // if (cmsEntry && cmsEntry["metaDescription"]) {
+            //     assert
+            //     $("meta[name='description']").getAttribute("content") == cmsEntry["metaDescription"]
+            // } else {
+            //     def
+            //     descriptionPattern = ".* bei ${shopTitle[System.getProperty("
+            //     shopId
+            //     ")]} online kaufen. \\d+ Artikel verfügbar im Shop\$"
+            //     assert
+            //     $("meta[name='description']").getAttribute("content") = ~descriptionPattern
+            // }
+        //
+
         await page.waitFor(9999);
 
     })
