@@ -4,7 +4,9 @@ module.exports = {
     timers: "real",
     globals: {
         shopId: "hoeffner",
-        host: "https://shop:kbs46042014@stage.hoeffner.de",
+        shopTitle: "Höffner",
+        hostCredentials: "https://shop:kbs46042014@stage.hoeffner.de",
+        host: "https://stage.hoeffner.de",
         // host: "https://www.hoeffner.de",
         zip: "41460",
         user: {

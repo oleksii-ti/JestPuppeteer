@@ -28,14 +28,10 @@ class CMSHelper {
             cmsEntry = cmsEntry["additionalInformations"];
         }
 
-        console.log(cmsEntry);
-
         seoData["robots"] = cmsEntry["metaRobots"];
         seoData["title"] = cmsEntry["metaPageTitle"];
         seoData["description"] = cmsEntry["metaDescription"];
         return seoData;
-
-
     }
 
 }

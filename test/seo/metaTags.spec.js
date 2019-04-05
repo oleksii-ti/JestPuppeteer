@@ -1,7 +1,6 @@
 require("../../commonTestRequirements");
 
 const puppeteer = require('puppeteer');
-console.log("GLOBALS: " + global);
 
 let page;
 let browser;
@@ -9,19 +8,25 @@ const bwidth = 1300;
 const bheight = 900;
 jest.setTimeout(100000);
 
-describe('Checkout', () => {
+describe('SEO', () => {
 
 
     beforeAll(async () => {
 
 
         browser = await puppeteer.launch({
-            headless: false, devtools: false, args: [
+            headless: true, devtools: false, args: [
                 '--disable-infobars',
-                '--disable-features=site-per-process',
-                '--window-size=${ bwidth },${ bheight }'
+                '--disable-features=site-per-process'
+                // '--window-size=${ bwidth },${ bheight }'
             ]
         }); // , args: ['--proxy-server=tyshchenko:alexalex@pswdf216.kriegerit.de:8080']
+        cmsClient = await new CMSClient();
+        cmsData = await cmsClient.getCMSContext();
+
+        titlePattern = new RegExp(".* bei " + global.shopTitle + "\$");
+        descriptionPattern = new RegExp(".* bei " + global.shopTitle + " online kaufen. \\d+ Artikel verfügbar im Sho");
+
 
     });
 
@@ -38,19 +43,6 @@ describe('Checkout', () => {
         // Def page
         page = await newPageWithNewContext(browser)
         await page.setViewport({width: bwidth, height: bheight})
-        // Cookies
-        await page.goto(global.host, {waitUntil: 'networkidle0'});
-        const cookiesSet = await page.cookies();
-        const cookie = cookiesSet.find(o => o.name === 'MULTIGROUP_TEST');
-        const value2 = cookie["value"].replace(/^j\%3A\%5B\d*\%2C\d*/, "j%3A%5B99%2C99")
-        await page._client.send('Network.clearBrowserCookies');
-        await page.setCookie({
-            'name': 'MULTIGROUP_TEST',
-            'value': value2
-        });
-
-        const cookiesSet1 = await page.cookies();
-        console.log(cookiesSet1.find(o => o.name === 'MULTIGROUP_TEST')["value"]);
 
         // Catch errors
         await page.on("pageerror", function (err) {
@@ -59,11 +51,6 @@ describe('Checkout', () => {
             console.log("Page error: " + theTempValue);
         });
         // await page.setRequestInterception(true);
-
-
-        // Catch     requests
-        // page.on('request', request => {
-        // console.log(request.url()); });
 
     });
 
@@ -79,98 +66,64 @@ describe('Checkout', () => {
 
     it.each([
 
-        ["/big-sofas", "", "", "index,follow", "/big-sofas", null, null],
-        // ["/big-sofas", "", "?par=val", null, "/big-sofas", null, null],
-        // ["/sofas", "", "", "index,follow", "/sofas", null, "/2"],
-        // ["/sofas", "", "?par=val", null, "/sofas", null, null],
-        // ["/sofas", "/2", "", "index,follow", "/sofas/2", "", "/3"],
-        // ["/sofas", "/2", "?par=val", null, "/sofas", null, null],
-        // ["/sofas", "/3", "", "index,follow", "/sofas/3", "/2", "/4"],
-        // ["/sofas", "/3", "?par=val", null, "/sofas/3", null, null],
-        // ["/geschirrablagen", "", "", "noindex,follow", null, null, null],
-        // ["/geschirrablagen", "", "?par=val", "noindex,follow", null, null, null],
-        // ["/messer_wmf", "", "", "index,follow", "/messer_wmf", null, null],
-        // ["/messer_wmf", "", "?par=val", null, "/messer_wmf", null, null],
-        // ["/wmf", "", "", "index,follow", "/wmf", null, "/2"],
-        // ["/wmf", "", "?par=val", null, "/wmf", null, null]
+        ["/big-sofas", "", "", "index,follow", global.host + "/big-sofas", undefined, undefined],
+        ["/big-sofas", "", "?par=val", undefined, global.host + "/big-sofas", undefined, undefined],
+        ["/sofas", "", "", "index,follow", global.host + "/sofas", undefined, "/2"],
+        ["/sofas", "", "?par=val", undefined, global.host + "/sofas", undefined, undefined],
+        ["/sofas", "/2", "", "index,follow", global.host + "/sofas/2", "", "/3"],
+        ["/sofas", "/2", "?par=val", undefined, global.host + "/sofas/2", undefined, undefined],
+        ["/sofas", "/3", "", "index,follow", global.host + "/sofas/3", "/2", "/4"],
+        ["/sofas", "/3", "?par=val", undefined, global.host + "/sofas/3", undefined, undefined],
+        ["/geschirrablagen", "", "", "noindex,follow", undefined, undefined, undefined],
+        ["/geschirrablagen", "", "?par=val", "noindex,follow", undefined, undefined, undefined],
+        ["/messer_wmf", "", "", "index,follow", global.host + "/messer_wmf", undefined, undefined],
+        ["/messer_wmf", "", "?par=val", undefined, global.host + "/messer_wmf", undefined, undefined],
+        ["/wmf", "", "", "index,follow", global.host + "/wmf", undefined, "/2"],
+        ["/wmf", "", "?par=val", undefined, global.host + "/wmf", undefined, undefined],
+        ["/glaeser_leonardo", "", "", undefined, global.host + "/glaeser_leonardo", undefined, undefined],
 
-    ])('Meta Tags %s with %s', async (url, page_url, params, robots, canonical, prev, next) => {
-        const cmsClient = await new CMSClient();
-        const cmsData = await cmsClient.getCMSContext();
+
+    ])('Meta Tags %s%s/%s', async (url, pageNum, params, robots, canonical, prev, next, status) => {
+
+        response = await page.goto(global.hostCredentials + url + pageNum + params, {waitUntil: 'load'});
+        const testPage = new Page(page);
+        if(next != undefined) { next = global.host + url + next; }
+        if(prev != undefined) { prev = global.host + url + prev; }
+
         const cmsEntry = await cmsClient.getSEOData(cmsData, url);
 
 
-        await console.log(cmsEntry);
+        canonicalHref = await testPage.canonical();
+        expect(canonicalHref).toEqual(canonical);
 
+        prevHref = await testPage.previous();
 
-        await page.goto(global.host + url, {waitUntil: 'load'});
+        expect(prevHref).toEqual(prev);
 
+        nextHref = await testPage.next();
+        expect(nextHref).toEqual(next);
 
+        robotsContent = await testPage.robots();
+        if (cmsEntry["robots"]) {
+            expect(robotsContent).toEqual(cmsEntry["robots"]);
+        } else {
+            expect(robotsContent).toEqual(robots);
+        }
 
+        title = await page.title();
+        if (cmsEntry["title"]) {
+            expect(title).toEqual(cmsEntry["title"]);
+        } else {
+            expect(title).toMatch(titlePattern);
+        }
 
+        description = await testPage.description();
+        if (cmsEntry["description"]) {
+            expect(description).toEqual(cmsEntry["description"]);
+        } else {
+            expect(description).toMatch(descriptionPattern);
+        }
 
-
-            // if (robots == null) {
-            //     expect(page.$("meta[name='robots']") instanceof geb.navigator.EmptyNavigator
-            // } else if (cmsEntry && cmsEntry["metaRobots"]) {
-            //     expect(page.$("meta[name='robots'][content='%s']", cmsEntry["metaRobots"])
-            //
-            // } else {
-            //     assert
-            //     $("meta[name='robots'][content='${robots}']")
-            // }
-
-            // if (canonical != null) {
-        // await  expect(await page.$("link[rel='canonical']").attribute("href") == "${host}${url}${page}");
-        await  expect(await page.$$eval("link[rel='canonical']", a => a.href) == global.host + url + page_url);
-            // } else {
-            //     assert
-            //     $("link[rel='canonical']") instanceof geb.navigator.EmptyNavigator
-            // }
-
-            // if (prev != null) {
-            //     assert
-            //     $("link[rel='prev']").getAttribute("href") == "${host}${url}${prev}"
-            // } else {
-            //     assert
-            //     $("link[rel='prev']") instanceof geb.navigator.EmptyNavigator
-            // }
-            //
-            // if (next != null) {
-            //     assert
-            //     $("link[rel='next']").getAttribute("href") == "${host}${url}${next}"
-            // } else {
-            //     assert
-            //     $("link[rel='next']") instanceof geb.navigator.EmptyNavigator
-            //
-            // }
-            //
-            // if (cmsEntry && cmsEntry["metaPageTitle"]) {
-            //
-            //     assert driver.getTitle() == cmsEntry["metaPageTitle"]
-            // } else {
-            //     def
-            //     titlePattern = ".* bei ${shopTitle[System.getProperty("
-            //     shopId
-            //     ")]}\$"
-            //     assert
-            //     driver.getTitle() = ~titlePattern
-            // }
-            //
-            // if (cmsEntry && cmsEntry["metaDescription"]) {
-            //     assert
-            //     $("meta[name='description']").getAttribute("content") == cmsEntry["metaDescription"]
-            // } else {
-            //     def
-            //     descriptionPattern = ".* bei ${shopTitle[System.getProperty("
-            //     shopId
-            //     ")]} online kaufen. \\d+ Artikel verfügbar im Shop\$"
-            //     assert
-            //     $("meta[name='description']").getAttribute("content") = ~descriptionPattern
-            // }
-        //
-
-        await page.waitFor(9999);
 
     })
 });

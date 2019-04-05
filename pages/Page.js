@@ -1,29 +1,41 @@
 class Page {
+
     constructor(page) {
         this.page = page;
         this.page.addStyleTag({content: "html * { transition: none!important; }"});
         this.page.setCacheEnabled(false);
     }
 
-    async open(url) {
-        await this.page.goto(url, {waitUntil: 'load'});
 
-        // Cookies
-        await page.goto(global.host, {waitUntil: 'networkidle0'});
-        const cookiesSet = await page.cookies();
-        const cookie = cookiesSet.find(o => o.name === 'MULTIGROUP_TEST');
-        const value2 = cookie["value"].replace(/^j\%3A\%5B\d*\%2C\d*/, "j%3A%5B99%2C99")
-        await page._client.send('Network.clearBrowserCookies');
-        await page.setCookie({
-            'name': 'MULTIGROUP_TEST',
-            'value': value2
-        });
-
-        const cookiesSet1 = await page.cookies();
-        console.log(cookiesSet1.find(o => o.name === 'MULTIGROUP_TEST')["value"]);
+    async canonical() {
+        return await this.page.$$eval("link[rel='canonical']", hrefs => hrefs.map((a) => {
+            return a.href
+        })[0]);
     }
 
-    // var baseAction = ( block ) => block();
+    async previous() {
+        return await this.page.$$eval("link[rel='prev']", hrefs => hrefs.map((a) => {
+            return a.href
+        })[0]);
+    }
+
+    async next() {
+        return await this.page.$$eval("link[rel='next']", hrefs => hrefs.map((a) => {
+            return a.href
+        })[0]);
+    }
+
+    async robots() {
+        return await this.page.$$eval("meta[name='robots']", hrefs => hrefs.map((meta) => {
+            return meta.content
+        })[0]);
+    }
+
+    async description() {
+        return await this.page.$$eval("meta[name='description']", hrefs => hrefs.map((meta) => {
+            return meta.content
+        })[0]);
+    }
 
 
     async log(logText, callback) {
@@ -38,4 +50,4 @@ class Page {
 }
 
 
-module.exports = Page
+module.exports = Page;

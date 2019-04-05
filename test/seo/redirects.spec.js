@@ -1,7 +1,6 @@
 require("../../commonTestRequirements");
 
 const puppeteer = require('puppeteer');
-console.log("GLOBALS: " + global);
 
 let page;
 let browser;
@@ -9,19 +8,23 @@ const bwidth = 1300;
 const bheight = 900;
 jest.setTimeout(100000);
 
-describe('Checkout', () => {
+describe('SEO', () => {
 
 
     beforeAll(async () => {
 
-
         browser = await puppeteer.launch({
-            headless: false, devtools: false, args: [
+            headless: true, devtools: false, args: [
                 '--disable-infobars',
-                '--disable-features=site-per-process',
-                '--window-size=${ bwidth },${ bheight }'
+                '--disable-features=site-per-process'
+                // '--window-size=${ bwidth },${ bheight }'
             ]
         }); // , args: ['--proxy-server=tyshchenko:alexalex@pswdf216.kriegerit.de:8080']
+        cmsClient = await new CMSClient();
+        cmsData = await cmsClient.getCMSContext();
+
+        titlePattern = new RegExp(".* bei " + global.shopTitle + "\$");
+        descriptionPattern = new RegExp(".* bei " + global.shopTitle + " online kaufen. \\d+ Artikel verfügbar im Shop");
 
     });
 
@@ -33,24 +36,10 @@ describe('Checkout', () => {
         return page;
     }
 
-
     beforeEach(async () => {
         // Def page
-        page = await newPageWithNewContext(browser)
-        await page.setViewport({width: bwidth, height: bheight})
-        // Cookies
-        await page.goto(global.host, {waitUntil: 'networkidle0'});
-        const cookiesSet = await page.cookies();
-        const cookie = cookiesSet.find(o => o.name === 'MULTIGROUP_TEST');
-        const value2 = cookie["value"].replace(/^j\%3A\%5B\d*\%2C\d*/, "j%3A%5B99%2C99")
-        await page._client.send('Network.clearBrowserCookies');
-        await page.setCookie({
-            'name': 'MULTIGROUP_TEST',
-            'value': value2
-        });
-
-        const cookiesSet1 = await page.cookies();
-        console.log(cookiesSet1.find(o => o.name === 'MULTIGROUP_TEST')["value"]);
+        page = await newPageWithNewContext(browser);
+        await page.setViewport({width: bwidth, height: bheight});
 
         // Catch errors
         await page.on("pageerror", function (err) {
@@ -60,10 +49,13 @@ describe('Checkout', () => {
         });
         // await page.setRequestInterception(true);
 
-
-        // Catch     requests
-        // page.on('request', request => {
-        // console.log(request.url()); });
+        page.on('response', response => {
+            const status = response.status();
+            if ((status >= 300) && (status <= 399)) {
+                redirectStatus = response.status();
+                redirectUrl = response.headers().location;
+            }
+        })
 
     });
 
@@ -78,24 +70,66 @@ describe('Checkout', () => {
 
 
     it.each([
-        // ["/sofas", "smart", ""]
-        ["/messer", "WMF", "/messer_wmf"]
-        // ["/sofas_wmf",  "", ""],
-        // ["/glaeser",  "LEONARDO", ""]
-    ])('Redirects %s with %s', async (url, filter, redirect) => {
-        const cmsClient = new CMSClient();
-        const cmsContext = await cmsClient.urlMatcherExport();
-        await console.log(cmsContext.length);
-        await page.goto(global.host + url, {waitUntil: 'load'});
-        const catalog = new CatalogPage(page);
-        await catalog.openFilter("brands");
-        await catalog.setFilter(filter);
-        if(redirect != "") {
-            await page.waitForNavigation({waitUntil: "networkidle0"});
-            await expect(page.url()).toContain(redirect);
 
+        ["/sofas", "/999", "", "index,follow", global.host + "/sofas", undefined, "/2", 302],
+        ["/sofas", "/999", "?par=val", "index,follow", global.host + "/sofas", undefined, "/2", 302],
+
+        ["/sofas_wmf", "", "", "index,follow", global.host + "/sofas", undefined, "/2", 301],
+        ["/sofas_wmf", "", "?par=val", "index,follow", global.host + "/sofas", undefined, "/2", 301],
+        ["/sofas_wmf", "/999", "", "index,follow", global.host + "/sofas", undefined, "/2", 302],
+        ["/sofas_wmf", "/999", "", "index,follow", global.host + "/sofas", undefined, "/2", 302],
+        ["/sofas_wmf", "/999", "?par=val", "index,follow", global.host + "/sofas", undefined, "/2", 302],
+
+        ["/messer_wmf", "/999", "", "index,follow", global.host + "/messer_wmf", undefined, undefined, 302],
+        ["/messer_wmf", "/999", "?par=val", "index,follow", global.host + "/messer_wmf", undefined, undefined, 302],
+
+        ["/sofas_smart", "", "", "index,follow", global.host + "/sofas", undefined, "/2", 301],
+        ["/sofas_smart", "", "?par=val", "index,follow", global.host + "/sofas", undefined, "/2", 301]
+
+    ])('Redirect %s%s/%s', async (url, pageNum, params, robots, canonical, prev, next, status) => {
+
+        response = await page.goto(global.hostCredentials + url + pageNum + params, {waitUntil: 'load'});
+        const testPage = new Page(page);
+        if (redirectUrl) { url = redirectUrl }
+        if (next != undefined) { next = global.host + url + next; }
+        if (prev != undefined) { prev = global.host + url + prev; }
+
+        const cmsEntry = await cmsClient.getSEOData(cmsData, url);
+
+        canonicalHref = await testPage.canonical();
+        expect(canonicalHref).toEqual(canonical);
+
+        prevHref = await testPage.previous();
+
+        expect(prevHref).toEqual(prev);
+
+        nextHref = await testPage.next();
+        expect(nextHref).toEqual(next);
+
+        robotsContent = await testPage.robots();
+        if (cmsEntry["robots"]) {
+            expect(robotsContent).toEqual(cmsEntry["robots"]);
+        } else {
+            expect(robotsContent).toEqual(robots);
         }
-        await page.waitFor(9999);
+
+        title = await page.title();
+        if (cmsEntry["title"]) {
+            expect(title).toEqual(cmsEntry["title"]);
+        } else {
+            expect(title).toMatch(titlePattern);
+        }
+
+        description = await testPage.description();
+        if (cmsEntry["description"]) {
+            expect(description).toEqual(cmsEntry["description"]);
+        } else {
+            expect(description).toMatch(descriptionPattern);
+        }
+
+        if (status) {
+            expect(redirectStatus).toEqual(status);
+        }
 
     })
 });
