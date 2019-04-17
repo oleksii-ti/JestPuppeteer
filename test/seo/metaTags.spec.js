@@ -1,86 +1,26 @@
 require("../../commonTestRequirements");
 
-const puppeteer = require('puppeteer');
-
-let page;
-let browser;
-const bwidth = 1300;
-const bheight = 900;
 jest.setTimeout(100000);
 
 describe('SEO', () => {
 
-
-    beforeAll(async () => {
-
-
-        browser = await puppeteer.launch({
-            headless: true, devtools: false, args: [
-                '--disable-infobars',
-                '--disable-features=site-per-process'
-                // '--window-size=${ bwidth },${ bheight }'
-            ]
-        }); // , args: ['--proxy-server=tyshchenko:alexalex@pswdf216.kriegerit.de:8080']
-        cmsClient = await new CMSClient();
-        cmsData = await cmsClient.getCMSContext();
-
-        titlePattern = new RegExp(".* bei " + global.shopTitle + "\$");
-        descriptionPattern = new RegExp(".* bei " + global.shopTitle + " online kaufen. \\d+ Artikel verfügbar im Sho");
-
-
-    });
-
-    async function newPageWithNewContext(browser) {
-        // const {browserContextId} = await browser._connection.send('Target.createBrowserContext');
-        // page = await browser._createPageInContext(browserContextId);
-        page = await browser.newPage();
-        // page.browserContextId = browserContextId;
-        return page;
-    }
-
-
-    beforeEach(async () => {
-        // Def page
-        page = await newPageWithNewContext(browser)
-        await page.setViewport({width: bwidth, height: bheight})
-
-        // Catch errors
-        await page.on("pageerror", function (err) {
-            theTempValue = err.toString();
-
-            console.log("Page error: " + theTempValue);
-        });
-        // await page.setRequestInterception(true);
-
-    });
-
-    afterEach(async () => {
-        page.close();
-    });
-
-    afterAll(async () => {
-        await page.waitFor(1000);
-        await browser.close();
-    });
-
-
     it.each([
 
         ["/big-sofas", "", "", "index,follow", global.host + "/big-sofas", undefined, undefined],
-        ["/big-sofas", "", "?par=val", undefined, global.host + "/big-sofas", undefined, undefined],
-        ["/sofas", "", "", "index,follow", global.host + "/sofas", undefined, "/2"],
-        ["/sofas", "", "?par=val", undefined, global.host + "/sofas", undefined, undefined],
-        ["/sofas", "/2", "", "index,follow", global.host + "/sofas/2", "", "/3"],
-        ["/sofas", "/2", "?par=val", undefined, global.host + "/sofas/2", undefined, undefined],
-        ["/sofas", "/3", "", "index,follow", global.host + "/sofas/3", "/2", "/4"],
-        ["/sofas", "/3", "?par=val", undefined, global.host + "/sofas/3", undefined, undefined],
-        ["/geschirrablagen", "", "", "noindex,follow", undefined, undefined, undefined],
-        ["/geschirrablagen", "", "?par=val", "noindex,follow", undefined, undefined, undefined],
-        ["/messer_wmf", "", "", "index,follow", global.host + "/messer_wmf", undefined, undefined],
-        ["/messer_wmf", "", "?par=val", undefined, global.host + "/messer_wmf", undefined, undefined],
-        ["/wmf", "", "", "index,follow", global.host + "/wmf", undefined, "/2"],
-        ["/wmf", "", "?par=val", undefined, global.host + "/wmf", undefined, undefined],
-        ["/glaeser_leonardo", "", "", undefined, global.host + "/glaeser_leonardo", undefined, undefined],
+        // ["/big-sofas", "", "?par=val", undefined, global.host + "/big-sofas", undefined, undefined],
+        // ["/sofas", "", "", "index,follow", global.host + "/sofas", undefined, "/2"],
+        // ["/sofas", "", "?par=val", undefined, global.host + "/sofas", undefined, undefined],
+        // ["/sofas", "/2", "", "index,follow", global.host + "/sofas/2", "", "/3"],
+        // ["/sofas", "/2", "?par=val", undefined, global.host + "/sofas/2", undefined, undefined],
+        // ["/sofas", "/3", "", "index,follow", global.host + "/sofas/3", "/2", "/4"],
+        // ["/sofas", "/3", "?par=val", undefined, global.host + "/sofas/3", undefined, undefined],
+        // ["/geschirrablagen", "", "", "noindex,follow", undefined, undefined, undefined],
+        // ["/geschirrablagen", "", "?par=val", "noindex,follow", undefined, undefined, undefined],
+        // ["/messer_wmf", "", "", "index,follow", global.host + "/messer_wmf", undefined, undefined],
+        // ["/messer_wmf", "", "?par=val", undefined, global.host + "/messer_wmf", undefined, undefined],
+        // ["/wmf", "", "", "index,follow", global.host + "/wmf", undefined, "/2"],
+        // ["/wmf", "", "?par=val", undefined, global.host + "/wmf", undefined, undefined],
+        // ["/glaeser_leonardo", "", "", undefined, global.host + "/glaeser_leonardo", undefined, undefined],
 
 
     ])('Meta Tags %s%s/%s', async (url, pageNum, params, robots, canonical, prev, next, status) => {
@@ -123,7 +63,6 @@ describe('SEO', () => {
         } else {
             expect(description).toMatch(descriptionPattern);
         }
-
 
     })
 });

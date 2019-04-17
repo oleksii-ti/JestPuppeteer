@@ -8,8 +8,12 @@ class PaymentMethodPage extends Page {
     }
 
     async confirmPayment(type) {
-        await this.page.click("." + type + "PaymentForm #postPaymentFormHeader");
-        await this.page.waitForNavigation({waitUntil: "networkidle0"});
+        await super.log("confirmPayment", async () => {
+            await Promise.all([
+                this.page.click("." + type + "PaymentForm #postPaymentFormHeader"),
+                this.page.waitForNavigation({waitUntil: "networkidle0"})
+            ]);
+        });
     }
 
     async invoiceCheckbox() {
@@ -43,7 +47,6 @@ class PaymentMethodPage extends Page {
         await frame.click("#payment-submit");
         await this.page.waitForNavigation({waitUntil: "networkidle0"});
     }
-
 
 }
 

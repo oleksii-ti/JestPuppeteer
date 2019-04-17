@@ -2,11 +2,18 @@ module.exports = {
     verbose: true,
     transformIgnorePatterns: ["./node_modules/.*"],
     timers: "real",
+    maxConcurrency: 2,
     globals: {
+        sizes: {
+            S: {width: 230, height: 568},
+            M: {width: 768, height: 1024},
+            L: {width: 1024, height: 768},
+            XL:{width: 1440, height: 960}
+        },
         shopId: "hoeffner",
         shopTitle: "Höffner",
-        hostCredentials: "https://shop:kbs46042014@stage.hoeffner.de",
-        host: "https://stage.hoeffner.de",
+        hostCredentials: "https://www.hoeffner.de",
+        host: "https://www.hoeffner.de",
         // host: "https://www.hoeffner.de",
         zip: "41460",
         user: {

@@ -17,9 +17,10 @@ class PaymentSummaryPage extends Page {
     async confirmCreditCard() {
         await Promise.all([
             this.page.click("#Submit"),
-            await this.page.waitForNavigation({waitUntil: "networkidle0"}),
-            await this.page.waitForNavigation({waitUntil: "networkidle2"})
+            await this.page.waitForNavigation({waitUntil: "networkidle0"})
         ]);
+        await this.page.waitForNavigation({waitUntil: "networkidle2"})
+
     }
 
     async confirmDirectBanking() {

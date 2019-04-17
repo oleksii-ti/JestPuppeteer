@@ -1,4 +1,3 @@
-require('./helpers/PuppeteerHelper');
 
 function smartRequire(fileName) {
 	try {
@@ -9,6 +8,7 @@ function smartRequire(fileName) {
 }
 
 global.HybrisClient = smartRequire("helpers/HybrisHelper")
+global.Browser = smartRequire("helpers/BrowserHelper")
 global.CMSClient = smartRequire("helpers/CMSHelper")
 global.Page = smartRequire('pages/Page');
 global.ArticlePage = smartRequire('pages/ArticlePage');
@@ -28,3 +28,6 @@ global.KitchenFormAction = smartRequire('actions/forms/KitchenFormAction.js');
 
 global.LoginAction = smartRequire('actions/LoginAction');
 global.CartAction = smartRequire('actions/CartAction');
+
+smartRequire("helpers/TestHelper")
+

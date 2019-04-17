@@ -12,4 +12,4 @@ class CartPage extends Page {
     }
 }
 
-module.exports = CartPage
+module.exports = CartPage;

@@ -3,6 +3,7 @@ const Page = require('./Page');
 class ArticlePage extends Page {
     constructor(page) {
         super(page)
+        this.page.click("#acceptCookie")
     }
 
     async addToCart() {
@@ -37,7 +38,7 @@ class ArticlePage extends Page {
             await this.page.waitForSelector(selector);
             await this.page.evaluate(_=> { window.scrollBy(0, window.innerHeight); });
             await this.page.evaluate( () => document.getElementById("zipcode-logistic-input").value = "");
-            await this.page.type(selector, zip, { delay: 50 });
+            await this.page.type(selector, zip, { delay: 200 });
         });
 
     }

@@ -9,7 +9,7 @@ const bwidth = 1300;
 const bheight = 900;
 jest.setTimeout(100000);
 
-describe('Checkout', () => {
+describe('SEO', () => {
 
 
     beforeAll(async () => {

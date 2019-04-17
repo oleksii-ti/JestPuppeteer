@@ -1,11 +1,5 @@
 require("../../commonTestRequirements");
 
-const puppeteer = require('puppeteer');
-
-let page;
-let browser;
-const bwidth = 1300;
-const bheight = 900;
 jest.setTimeout(100000);
 
 describe('SEO', () => {
@@ -51,10 +45,34 @@ describe('SEO', () => {
 
         page.on('response', response => {
             const status = response.status();
+            // if ('xhr' == response.request().resourceType()){
+                console.log(response.request().resourceType());
+                console.log(response.url());
+                console.log(response.status());
+            // }
+            console.log(response.url());
             if ((status >= 300) && (status <= 399)) {
                 redirectStatus = response.status();
                 redirectUrl = response.headers().location;
             }
+        })
+        page.on('request', response => {
+            const status = response.status();
+            // if ('xhr' == response.request().resourceType()){
+            console.log(response.request().resourceType());
+            console.log(response.url());
+            console.log(response.status());
+            // }
+
+        })
+        page.on('Network.responseReceived', response => {
+            const status = response.status();
+            // if ('xhr' == response.request().resourceType()){
+            console.log(response.request().resourceType());
+            console.log(response.url());
+            console.log(response.status());
+            // }
+
         })
 
     });
