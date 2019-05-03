@@ -4,7 +4,7 @@ jest.setTimeout(100000);
 
 describe('Checkout', () => {
 
-    it.each(["guest", "user"])('Cash On Delivery as %s', async (user) => {
+    if (global.shopId == "hoeffner") it.each(["guest", "user"])('Cash On Delivery as %s', async (user) => {
         await page.goto(global.host + global.defaultArtikel, {waitUntil: 'load'});
 
         const article = new ArticlePage(page);

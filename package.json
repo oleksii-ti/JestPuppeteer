@@ -11,7 +11,8 @@
   "dependencies": {
     "puppeteer": "1.13.0",
     "puppeteer-core": "1.13.0",
-    "node-fetch": ">= 2.3.0"
+    "node-fetch": ">= 2.3.0",
+    "deepmerge": ""
   },
   "jest": {
     "verbose": true

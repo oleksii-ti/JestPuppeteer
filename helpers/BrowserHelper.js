@@ -2,6 +2,16 @@ const puppeteer = require('puppeteer');
 
 class BrowserHelper {
 
+    constructor() {
+        const args = require('minimist')(process.argv.slice(2));
+        let size = args["resolution"];
+        if (!size) {
+            size = "XL"
+        }
+
+        this.size = global.sizes[size];
+    }
+
     async start() {
         let browser = await puppeteer.launch({
             headless: false, devtools: false, args: [
@@ -15,20 +25,17 @@ class BrowserHelper {
     }
 
     async close() {
-        await this.browser.close()
+        await this.browser.close();
     }
 
-    async pageOpen(url) {
-        let page = await this.browser.newPage();
+    async pageOpen() {
+        let page2 = await this.browser.newPage();
 
-        const args = require('minimist')(process.argv.slice(2));
-        let size = args["resolution"];
-        if(!size) {
-            size = "XL"
-        }
-        await page.setViewport({width: global.sizes[size]["width"], height: global.sizes[size]["height"]});
+        await page2.setViewport({width: this.size["width"], height: this.size["height"]});
+        return page2;
+    }
 
-        // Cookies
+    async setCookies(page, url) {
         await page.goto(url, {waitUntil: 'networkidle0'});
         const cookiesSet = await page.cookies();
         const cookie = cookiesSet.find(o => o.name === 'MULTIGROUP_TEST');
@@ -38,10 +45,6 @@ class BrowserHelper {
             'name': 'MULTIGROUP_TEST',
             'value': value2
         });
-
-        const cookiesSet1 = await page.cookies();
-        console.log(cookiesSet1.find(o => o.name === 'MULTIGROUP_TEST')["value"]);
-        return page;
     }
 }
 

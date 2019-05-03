@@ -1,91 +1,9 @@
 require("../../commonTestRequirements");
 
-jest.setTimeout(100000);
-
 describe('SEO', () => {
 
-
-    beforeAll(async () => {
-
-        browser = await puppeteer.launch({
-            headless: true, devtools: false, args: [
-                '--disable-infobars',
-                '--disable-features=site-per-process'
-                // '--window-size=${ bwidth },${ bheight }'
-            ]
-        }); // , args: ['--proxy-server=tyshchenko:alexalex@pswdf216.kriegerit.de:8080']
-        cmsClient = await new CMSClient();
-        cmsData = await cmsClient.getCMSContext();
-
-        titlePattern = new RegExp(".* bei " + global.shopTitle + "\$");
-        descriptionPattern = new RegExp(".* bei " + global.shopTitle + " online kaufen. \\d+ Artikel verfügbar im Shop");
-
-    });
-
-    async function newPageWithNewContext(browser) {
-        // const {browserContextId} = await browser._connection.send('Target.createBrowserContext');
-        // page = await browser._createPageInContext(browserContextId);
-        page = await browser.newPage();
-        // page.browserContextId = browserContextId;
-        return page;
-    }
-
-    beforeEach(async () => {
-        // Def page
-        page = await newPageWithNewContext(browser);
-        await page.setViewport({width: bwidth, height: bheight});
-
-        // Catch errors
-        await page.on("pageerror", function (err) {
-            theTempValue = err.toString();
-
-            console.log("Page error: " + theTempValue);
-        });
-        // await page.setRequestInterception(true);
-
-        page.on('response', response => {
-            const status = response.status();
-            // if ('xhr' == response.request().resourceType()){
-                console.log(response.request().resourceType());
-                console.log(response.url());
-                console.log(response.status());
-            // }
-            console.log(response.url());
-            if ((status >= 300) && (status <= 399)) {
-                redirectStatus = response.status();
-                redirectUrl = response.headers().location;
-            }
-        })
-        page.on('request', response => {
-            const status = response.status();
-            // if ('xhr' == response.request().resourceType()){
-            console.log(response.request().resourceType());
-            console.log(response.url());
-            console.log(response.status());
-            // }
-
-        })
-        page.on('Network.responseReceived', response => {
-            const status = response.status();
-            // if ('xhr' == response.request().resourceType()){
-            console.log(response.request().resourceType());
-            console.log(response.url());
-            console.log(response.status());
-            // }
-
-        })
-
-    });
-
-    afterEach(async () => {
-        page.close();
-    });
-
-    afterAll(async () => {
-        await page.waitFor(1000);
-        await browser.close();
-    });
-
+    titlePattern = new RegExp(".* bei " + global.shopTitle + "\$");
+    descriptionPattern = new RegExp(".* bei " + global.shopTitle + " online kaufen. \\d+ Artikel verfügbar im Shop");
 
     it.each([
 
@@ -108,11 +26,17 @@ describe('SEO', () => {
 
         response = await page.goto(global.hostCredentials + url + pageNum + params, {waitUntil: 'load'});
         const testPage = new Page(page);
-        if (redirectUrl) { url = redirectUrl }
-        if (next != undefined) { next = global.host + url + next; }
-        if (prev != undefined) { prev = global.host + url + prev; }
+        if (redirectUrl) {
+            url = redirectUrl.replace(/\?.*/, "")
+        }
+        if (next != undefined) {
+            next = global.host + url + next;
+        }
+        if (prev != undefined) {
+            prev = global.host + url + prev;
+        }
 
-        const cmsEntry = await cmsClient.getSEOData(cmsData, url);
+        const cmsEntry = await cmsClient.getSEOData(url);
 
         canonicalHref = await testPage.canonical();
         expect(canonicalHref).toEqual(canonical);
@@ -130,6 +54,7 @@ describe('SEO', () => {
         } else {
             expect(robotsContent).toEqual(robots);
         }
+
 
         title = await page.title();
         if (cmsEntry["title"]) {
@@ -149,5 +74,5 @@ describe('SEO', () => {
             expect(redirectStatus).toEqual(status);
         }
 
-    })
+    });
 });

@@ -1,4 +1,4 @@
-module.exports = {
+ENV = {
     verbose: true,
     transformIgnorePatterns: ["./node_modules/.*"],
     timers: "real",
@@ -12,9 +12,8 @@ module.exports = {
         },
         shopId: "hoeffner",
         shopTitle: "Höffner",
-        hostCredentials: "https://www.hoeffner.de",
-        host: "https://www.hoeffner.de",
-        // host: "https://www.hoeffner.de",
+        hostCredentials: "https://shop:kbs46042014@stage.hoeffner.de",
+        host: "https://stage.hoeffner.de",
         zip: "41460",
         user: {
             email: "bestellungen_test@kos.krieger.de",
@@ -37,7 +36,11 @@ module.exports = {
                 username: "rest",
                 password: "password"
             }
+        },
+        cms:{
+            urlExport: "http://cms.hoeffnertoolsstage1.krieger-it.mcs-rz.de/api/urlMatcherExport"
         }
     }
-
 };
+
+module.exports = ENV;

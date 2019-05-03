@@ -38,7 +38,7 @@ class ArticlePage extends Page {
             await this.page.waitForSelector(selector);
             await this.page.evaluate(_=> { window.scrollBy(0, window.innerHeight); });
             await this.page.evaluate( () => document.getElementById("zipcode-logistic-input").value = "");
-            await this.page.type(selector, zip, { delay: 200 });
+            await this.page.type(selector, zip, { delay: 50 });
         });
 
     }
