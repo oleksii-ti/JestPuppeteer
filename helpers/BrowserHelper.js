@@ -16,7 +16,8 @@ class BrowserHelper {
         let browser = await puppeteer.launch({
             headless: false, devtools: false, args: [
                 '--disable-infobars',
-                '--disable-features=site-per-process'
+                '--disable-features=site-per-process',
+                // '--user-data-dir=/tmp/session-123'
             ]
         });
 
@@ -28,15 +29,16 @@ class BrowserHelper {
         await this.browser.close();
     }
 
-    async pageOpen() {
+    async pageOpen(setCookies = true) {
         let page2 = await this.browser.newPage();
 
         await page2.setViewport({width: this.size["width"], height: this.size["height"]});
+
         return page2;
     }
 
-    async setCookies(page, url) {
-        await page.goto(url, {waitUntil: 'networkidle0'});
+    async replaceCookies(page) {
+        // await page.goto(url, {waitUntil: 'networkidle0'});
         const cookiesSet = await page.cookies();
         const cookie = cookiesSet.find(o => o.name === 'MULTIGROUP_TEST');
         const value2 = cookie["value"].replace(/^j\%3A\%5B\d*\%2C\d*/, "j%3A%5B99%2C99")
@@ -46,6 +48,15 @@ class BrowserHelper {
             'value': value2
         });
     }
+
+    async gotoUrl(url, cookie = true) {
+        let response = await page.goto(url, {waitUntil: 'load'});
+        if (cookie) {
+            await browser.replaceCookies(page);
+        }
+        return response;
+    }
 }
+
 
 module.exports = BrowserHelper;
